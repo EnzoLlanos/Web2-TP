@@ -11,7 +11,7 @@ public final class FavoritoMapper {
     }
 
     public static Favorito toEntity(FavoritoRequestDTO dto) {
-        return new Favorito(null, dto.productoId(), dto.nota(), null);
+        return new Favorito(null, dto.productoId(), dto.nota(), null, dto.listaId());
     }
 
     public static FavoritoResponseDTO toResponse(Favorito entity) {
@@ -19,7 +19,8 @@ public final class FavoritoMapper {
                 entity.getId(),
                 entity.getProductoId(),
                 entity.getNota(),
-                entity.getFechaAgregado()
+                entity.getFechaAgregado(),
+                entity.getListaId()
         );
     }
 }

@@ -22,7 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/favoritos")
-@Tag(name = "Favoritos", description = "Recurso propio con CRUD completo (en memoria)")
+@Tag(name = "Favoritos", description = "Recurso propio con CRUD completo (persistido en PostgreSQL)")
 public class FavoritoController {
 
     private final FavoritoService service;
@@ -39,7 +39,7 @@ public class FavoritoController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar favoritos", description = "Devuelve todos los favoritos guardados en memoria.")
+    @Operation(summary = "Listar favoritos", description = "Devuelve todos los favoritos guardados en PostgreSQL.")
     public List<FavoritoResponseDTO> listar() {
         return service.listar();
     }

@@ -1,0 +1,6 @@
+CREATE TABLE favoritos (
+    id BIGSERIAL PRIMARY KEY,
+    producto_id BIGINT NOT NULL,
+    nota VARCHAR(280) NOT NULL,
+    fecha_alta TIMESTAMP NOT NULL DEFAULT NOW()
+);

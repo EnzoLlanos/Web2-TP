@@ -12,41 +12,120 @@ GET {{base}}/api/productos/1
 ### 4. Productos - error: id inexistente -> 404
 GET {{base}}/api/productos/999999
 
-### 5. Favoritos - éxito: crear -> 201
+### 5. Listas - éxito: crear lista A -> 201
+POST {{base}}/api/listas
+Content-Type: application/json
+
+{
+  "nombre": "Regalos"
+}
+
+### 6. Listas - éxito: crear lista B -> 201
+POST {{base}}/api/listas
+Content-Type: application/json
+
+{
+  "nombre": "Para comprar en oferta"
+}
+
+### 7. Listas - éxito: listar -> 200
+GET {{base}}/api/listas
+
+### 8. Listas - éxito: obtener una -> 200 (usar id del paso 5)
+GET {{base}}/api/listas/1
+
+### 9. Listas - error: lista inexistente -> 404
+GET {{base}}/api/listas/9999
+
+### 10. Listas - error validación -> 400 (nombre vacío)
+POST {{base}}/api/listas
+Content-Type: application/json
+
+{
+  "nombre": ""
+}
+
+### 11. Favoritos - éxito: crear -> 201 (usar listaId existente)
 POST {{base}}/api/favoritos
 Content-Type: application/json
 
 {
   "productoId": 1,
-  "nota": "Regalo para mamá"
+  "nota": "Regalo para mamá",
+  "listaId": 1
 }
 
-### 6. Favoritos - éxito: listar -> 200
+### 12. Favoritos - éxito: listar -> 200
 GET {{base}}/api/favoritos
 
-### 7. Favoritos - éxito: obtener uno -> 200 (usar id devuelto en paso 5)
+### 13. Favoritos - éxito: obtener uno -> 200 (usar id devuelto en paso 11)
 GET {{base}}/api/favoritos/1
 
-### 8. Favoritos - éxito: actualizar -> 200
+### 14. Favoritos - éxito: actualizar -> 200
 PUT {{base}}/api/favoritos/1
 Content-Type: application/json
 
 {
   "productoId": 2,
-  "nota": "Mejor este otro modelo"
+  "nota": "Mejor este otro modelo",
+  "listaId": 1
 }
 
-### 9. Favoritos - éxito: eliminar -> 204
-DELETE {{base}}/api/favoritos/1
+### 15. Favoritos de una lista - éxito -> 200
+GET {{base}}/api/listas/1/favoritos
 
-### 10. Favoritos - error validación -> 400 (nota vacía + productoId nulo)
+### 16. Favoritos - error validación -> 400 (productoId nulo + nota vacía + listaId nulo)
 POST {{base}}/api/favoritos
 Content-Type: application/json
 
 {
   "productoId": null,
-  "nota": ""
+  "nota": "",
+  "listaId": null
 }
 
-### 11. Favoritos - error no encontrado -> 404
+### 17. Favoritos - error lista inexistente -> 404
+POST {{base}}/api/favoritos
+Content-Type: application/json
+
+{
+  "productoId": 1,
+  "nota": "Lista que no existe",
+  "listaId": 9999
+}
+
+### 18. Favoritos - error no encontrado -> 404
 GET {{base}}/api/favoritos/9999
+
+### 19. Listas - error: borrar lista con favoritos -> 409
+DELETE {{base}}/api/listas/1
+
+### 20. Listas - éxito: mover favoritos origen -> destino -> 204 (vacía la origen y la elimina)
+POST {{base}}/api/listas/1/mover-favoritos
+Content-Type: application/json
+
+{
+  "destinoId": 2
+}
+
+### 21. Listas - error: mover con origen inexistente -> 404
+POST {{base}}/api/listas/9999/mover-favoritos
+Content-Type: application/json
+
+{
+  "destinoId": 2
+}
+
+### 22. Listas - error: mover con destino inexistente -> 404 (usar id de lista existente como origen)
+POST {{base}}/api/listas/2/mover-favoritos
+Content-Type: application/json
+
+{
+  "destinoId": 9999
+}
+
+### 23. Listas - éxito: eliminar lista vacía -> 204 (la origen ya quedó vacía tras el paso 20, o la destino si se movió todo)
+DELETE {{base}}/api/listas/2
+
+### 24. Favoritos - éxito: eliminar -> 204
+DELETE {{base}}/api/favoritos/1

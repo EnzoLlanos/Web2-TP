@@ -17,9 +17,9 @@ public class OpenApiConfig {
     public OpenAPI demoOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("TP1 · Catálogo y Favoritos")
-                        .description("Catálogo de productos (consumo de una API externa) + favoritos "
-                                + "(CRUD propio en memoria). Práctico de introducción a Spring Boot.")
-                        .version("v1"));
+                        .title("TP2 · Catálogo, Favoritos y Listas (PostgreSQL)")
+                        .description("Catálogo de productos (consumo de una API externa) + favoritos y listas "
+                                + "(CRUD propio persistido en PostgreSQL con JPA/Flyway).")
+                        .version("v2"));
     }
 }

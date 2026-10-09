@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Contrato del repository. La implementación es en memoria (sin JPA).
+ * Puerto (contrato) del módulo Favoritos. El dominio y el Service solo
+ * conocen esta interfaz; las implementaciones concretas (adapters) viven
+ * en infraestructura y son intercambiables.
  */
 public interface FavoritoRepository {
 
@@ -15,6 +17,8 @@ public interface FavoritoRepository {
     List<Favorito> findAll();
 
     Optional<Favorito> findById(Long id);
+
+    List<Favorito> findByListaId(Long listaId);
 
     void deleteById(Long id);
 

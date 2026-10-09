@@ -19,6 +19,11 @@ public record FavoritoRequestDTO(
         @Schema(description = "Nota personal", example = "Regalo para mamá")
         @NotBlank(message = "nota no puede estar vacía")
         @Size(max = 280, message = "nota no puede superar los 280 caracteres")
-        String nota
+        String nota,
+
+        @Schema(description = "Id de la lista a la que pertenece el favorito", example = "1")
+        @NotNull(message = "listaId es obligatorio")
+        @Positive(message = "listaId debe ser mayor a 0")
+        Long listaId
 ) {
 }

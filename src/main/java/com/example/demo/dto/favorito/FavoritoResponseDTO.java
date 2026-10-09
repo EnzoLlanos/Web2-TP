@@ -12,6 +12,7 @@ public record FavoritoResponseDTO(
         @Schema(example = "1") Long id,
         @Schema(example = "1") Long productoId,
         @Schema(example = "Regalo para mamá") String nota,
-        @Schema(example = "2026-09-17T10:15:30") LocalDateTime fechaAgregado
+        @Schema(example = "2026-09-17T10:15:30") LocalDateTime fechaAgregado,
+        @Schema(description = "Id de la lista a la que pertenece", example = "1") Long listaId
 ) {
 }

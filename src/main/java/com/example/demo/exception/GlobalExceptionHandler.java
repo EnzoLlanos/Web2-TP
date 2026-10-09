@@ -29,6 +29,13 @@ public class GlobalExceptionHandler {
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
+    @ExceptionHandler(ListaConFavoritosException.class)
+    public ProblemDetail handleListaConFavoritos(ListaConFavoritosException ex) {
+        ProblemDetail problema = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problema.setTitle("La lista todavía tiene favoritos");
+        return problema;
+    }
+
     @ExceptionHandler(ServicioExternoException.class)
     public ProblemDetail handleServicioExterno(ServicioExternoException ex) {
         ProblemDetail problema = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, ex.getMessage());
