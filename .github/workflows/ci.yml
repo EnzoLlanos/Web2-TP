@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: Compilar, unitarias e integración
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar JDK 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - name: Dar permiso de ejecución al wrapper
+        run: chmod +x mvnw
+
+      - name: Compilar
+        run: ./mvnw -B --no-transfer-progress -DskipTests compile
+
+      # Surefire corre *Test (sin Docker).
+      # Failsafe corre *IT (Testcontainers levanta PostgreSQL real y Flyway
+      # aplica V1..V6 contra esa base limpia).
+      - name: Pruebas unitarias + integración
+        run: ./mvnw -B --no-transfer-progress verify
+
+      - name: Publicar reportes de pruebas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reportes-surefire-failsafe
+          path: |
+            target/surefire-reports/**
+            target/failsafe-reports/**
+          if-no-files-found: ignore

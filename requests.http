@@ -1,53 +1,100 @@
 @base = http://localhost:8080
+@token = PEGAR_TOKEN_DEVUELTO_POR_LOGIN
 
-### 1. Salud
+### 1. Salud (público)
 GET {{base}}/health
 
-### 2. Productos - éxito: listar (paginación limit/skip)
+### 2. Productos - éxito: listar (público, paginación limit/skip)
 GET {{base}}/api/productos?limit=5&skip=0
 
-### 3. Productos - éxito: obtener uno
+### 3. Productos - éxito: obtener uno (público)
 GET {{base}}/api/productos/1
 
 ### 4. Productos - error: id inexistente -> 404
 GET {{base}}/api/productos/999999
 
-### 5. Listas - éxito: crear lista A -> 201
+### 5. Auth - registro -> 201 (rol USER por defecto)
+POST {{base}}/api/auth/registro
+Content-Type: application/json
+
+{
+  "email": "ana@demo.com",
+  "password": "secreta123"
+}
+
+### 6. Auth - error: email repetido -> 409
+POST {{base}}/api/auth/registro
+Content-Type: application/json
+
+{
+  "email": "ana@demo.com",
+  "password": "secreta123"
+}
+
+### 7. Auth - login -> 200 con token (copiar "token" a @token)
+POST {{base}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "ana@demo.com",
+  "password": "secreta123"
+}
+
+### 8. Auth - error: credenciales inválidas -> 401
+POST {{base}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "ana@demo.com",
+  "password": "incorrecta"
+}
+
+### 9. Listas - error: sin token -> 401
+GET {{base}}/api/listas
+
+### 10. Listas - éxito: crear lista A -> 201
 POST {{base}}/api/listas
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "nombre": "Regalos"
 }
 
-### 6. Listas - éxito: crear lista B -> 201
+### 11. Listas - éxito: crear lista B -> 201
 POST {{base}}/api/listas
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "nombre": "Para comprar en oferta"
 }
 
-### 7. Listas - éxito: listar -> 200
+### 12. Listas - éxito: listar (solo las propias) -> 200
 GET {{base}}/api/listas
+Authorization: Bearer {{token}}
 
-### 8. Listas - éxito: obtener una -> 200 (usar id del paso 5)
+### 13. Listas - éxito: obtener una -> 200 (usar id del paso 10)
 GET {{base}}/api/listas/1
+Authorization: Bearer {{token}}
 
-### 9. Listas - error: lista inexistente -> 404
+### 14. Listas - error: lista inexistente -> 404
 GET {{base}}/api/listas/9999
+Authorization: Bearer {{token}}
 
-### 10. Listas - error validación -> 400 (nombre vacío)
+### 15. Listas - error validación -> 400 (nombre vacío)
 POST {{base}}/api/listas
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "nombre": ""
 }
 
-### 11. Favoritos - éxito: crear -> 201 (usar listaId existente)
+### 16. Favoritos - éxito: crear -> 201 (usar listaId existente)
 POST {{base}}/api/favoritos
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "productoId": 1,
@@ -55,15 +102,18 @@ Content-Type: application/json
   "listaId": 1
 }
 
-### 12. Favoritos - éxito: listar -> 200
+### 17. Favoritos - éxito: listar -> 200
 GET {{base}}/api/favoritos
+Authorization: Bearer {{token}}
 
-### 13. Favoritos - éxito: obtener uno -> 200 (usar id devuelto en paso 11)
+### 18. Favoritos - éxito: obtener uno -> 200 (usar id devuelto en paso 16)
 GET {{base}}/api/favoritos/1
+Authorization: Bearer {{token}}
 
-### 14. Favoritos - éxito: actualizar -> 200
+### 19. Favoritos - éxito: actualizar -> 200
 PUT {{base}}/api/favoritos/1
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "productoId": 2,
@@ -71,12 +121,14 @@ Content-Type: application/json
   "listaId": 1
 }
 
-### 15. Favoritos de una lista - éxito -> 200
+### 20. Favoritos de una lista - éxito -> 200
 GET {{base}}/api/listas/1/favoritos
+Authorization: Bearer {{token}}
 
-### 16. Favoritos - error validación -> 400 (productoId nulo + nota vacía + listaId nulo)
+### 21. Favoritos - error validación -> 400 (productoId nulo + nota vacía + listaId nulo)
 POST {{base}}/api/favoritos
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "productoId": null,
@@ -84,9 +136,10 @@ Content-Type: application/json
   "listaId": null
 }
 
-### 17. Favoritos - error lista inexistente -> 404
+### 22. Favoritos - error lista inexistente -> 404
 POST {{base}}/api/favoritos
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "productoId": 1,
@@ -94,38 +147,50 @@ Content-Type: application/json
   "listaId": 9999
 }
 
-### 18. Favoritos - error no encontrado -> 404
+### 23. Favoritos - error no encontrado -> 404
 GET {{base}}/api/favoritos/9999
+Authorization: Bearer {{token}}
 
-### 19. Listas - error: borrar lista con favoritos -> 409
+### 24. Listas - error: borrar lista con favoritos -> 409
 DELETE {{base}}/api/listas/1
+Authorization: Bearer {{token}}
 
-### 20. Listas - éxito: mover favoritos origen -> destino -> 204 (vacía la origen y la elimina)
+### 25. Listas - éxito: mover favoritos origen -> destino -> 204 (vacía la origen y la elimina)
 POST {{base}}/api/listas/1/mover-favoritos
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "destinoId": 2
 }
 
-### 21. Listas - error: mover con origen inexistente -> 404
+### 26. Listas - error: mover con origen inexistente -> 404
 POST {{base}}/api/listas/9999/mover-favoritos
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "destinoId": 2
 }
 
-### 22. Listas - error: mover con destino inexistente -> 404 (usar id de lista existente como origen)
+### 27. Listas - error: mover con destino inexistente -> 404 (usar id de lista existente como origen)
 POST {{base}}/api/listas/2/mover-favoritos
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "destinoId": 9999
 }
 
-### 23. Listas - éxito: eliminar lista vacía -> 204 (la origen ya quedó vacía tras el paso 20, o la destino si se movió todo)
+### 28. Listas - éxito: eliminar lista vacía -> 204
 DELETE {{base}}/api/listas/2
+Authorization: Bearer {{token}}
 
-### 24. Favoritos - éxito: eliminar -> 204
+### 29. Favoritos - éxito: eliminar -> 204
 DELETE {{base}}/api/favoritos/1
+Authorization: Bearer {{token}}
+
+### 30. Autorización - error: lista ajena -> 403
+# Repetir login con otro usuario y pedir una lista del primero.
+# GET {{base}}/api/listas/1
+# Authorization: Bearer {{tokenDeOtroUsuario}}

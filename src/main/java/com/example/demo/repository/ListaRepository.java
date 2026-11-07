@@ -14,6 +14,8 @@ public interface ListaRepository {
 
     List<Lista> findAll();
 
+    List<Lista> findByUsuarioId(Long usuarioId);
+
     Optional<Lista> findById(Long id);
 
     void deleteById(Long id);

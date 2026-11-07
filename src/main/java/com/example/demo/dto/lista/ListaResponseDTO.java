@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "Lista guardada")
 public record ListaResponseDTO(
         @Schema(example = "1") Long id,
-        @Schema(example = "Regalos") String nombre
+        @Schema(example = "Regalos") String nombre,
+        @Schema(description = "Id del usuario dueño de la lista", example = "1") Long usuarioId
 ) {
 }

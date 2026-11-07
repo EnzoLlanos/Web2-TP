@@ -2,6 +2,7 @@ package com.example.demo.repository;
 
 import com.example.demo.model.Favorito;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,8 @@ public interface FavoritoRepository {
     Optional<Favorito> findById(Long id);
 
     List<Favorito> findByListaId(Long listaId);
+
+    List<Favorito> findByListaIds(Collection<Long> listaIds);
 
     void deleteById(Long id);
 

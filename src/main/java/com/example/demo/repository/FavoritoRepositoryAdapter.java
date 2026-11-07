@@ -8,6 +8,7 @@ import com.example.demo.persistence.entity.ListaEntity;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,6 +48,11 @@ public class FavoritoRepositoryAdapter implements FavoritoRepository {
     @Override
     public List<Favorito> findByListaId(Long listaId) {
         return jpa.findByListaId(listaId).stream().map(this::toDomain).toList();
+    }
+
+    @Override
+    public List<Favorito> findByListaIds(Collection<Long> listaIds) {
+        return jpa.findByListaIdIn(listaIds).stream().map(this::toDomain).toList();
     }
 
     @Override

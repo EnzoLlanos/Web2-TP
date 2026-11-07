@@ -7,6 +7,7 @@ import com.example.demo.dto.lista.MoverFavoritosRequestDTO;
 import com.example.demo.service.ListaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/listas")
-@Tag(name = "Listas", description = "Listas propias para organizar favoritos (persistidas en PostgreSQL)")
+@Tag(name = "Listas", description = "Listas propias para organizar favoritos (persistidas en PostgreSQL). "
+        + "Requieren Bearer JWT; cada usuario solo ve y modifica sus listas (ADMIN ve todas).")
+@SecurityRequirement(name = "bearerAuth")
 public class ListaController {
 
     private final ListaService service;
@@ -34,19 +37,23 @@ public class ListaController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Crear una lista", description = "Crea una lista (p. ej. Regalos) y devuelve 201 Created.")
+    @Operation(summary = "Crear una lista",
+            description = "Crea una lista (p. ej. Regalos) para el usuario autenticado y devuelve 201 Created. "
+                    + "El dueño sale del token, nunca del body.")
     public ListaResponseDTO crear(@Valid @RequestBody ListaRequestDTO dto) {
         return service.crear(dto);
     }
 
     @GetMapping
-    @Operation(summary = "Listar listas", description = "Devuelve todas las listas guardadas en PostgreSQL.")
+    @Operation(summary = "Listar listas",
+            description = "Devuelve solo las listas del usuario autenticado (o todas si es ADMIN).")
     public List<ListaResponseDTO> listar() {
         return service.listar();
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener una lista por id", description = "Devuelve 404 si la lista no existe.")
+    @Operation(summary = "Obtener una lista por id",
+            description = "404 si no existe; 403 si existe pero es de otro usuario y no sos ADMIN.")
     public ListaResponseDTO obtenerPorId(
             @Parameter(description = "Id de la lista", example = "1")
             @PathVariable Long id) {
@@ -54,7 +61,8 @@ public class ListaController {
     }
 
     @GetMapping("/{id}/favoritos")
-    @Operation(summary = "Favoritos de una lista", description = "Devuelve los favoritos que pertenecen a la lista. 404 si la lista no existe.")
+    @Operation(summary = "Favoritos de una lista",
+            description = "Devuelve los favoritos de una lista propia. 404 si no existe; 403 si es ajena.")
     public List<FavoritoResponseDTO> favoritosDeLista(
             @Parameter(description = "Id de la lista", example = "1")
             @PathVariable Long id) {
@@ -63,7 +71,8 @@ public class ListaController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Eliminar una lista vacía", description = "Devuelve 204 sin body. 404 si no existe, 409 si todavía tiene favoritos.")
+    @Operation(summary = "Eliminar una lista vacía",
+            description = "204 sin body. 404 si no existe, 403 si es ajena, 409 si todavía tiene favoritos.")
     public void eliminar(
             @Parameter(description = "Id de la lista", example = "1")
             @PathVariable Long id) {
@@ -72,7 +81,9 @@ public class ListaController {
 
     @PostMapping("/{origenId}/mover-favoritos")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Mover favoritos entre listas", description = "Reasigna todos los favoritos de la lista origen a la destino y elimina la origen, de forma atómica. 404 si alguna no existe.")
+    @Operation(summary = "Mover favoritos entre listas",
+            description = "Reasigna todos los favoritos de la lista origen a la destino y elimina la origen, "
+                    + "de forma atómica. 404 si alguna no existe; 403 si alguna es ajena.")
     public void moverFavoritos(
             @Parameter(description = "Id de la lista origen (se elimina)", example = "1")
             @PathVariable Long origenId,

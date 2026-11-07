@@ -1,0 +1,40 @@
+# Blueprint de Render para el TP3.
+# Crear el servicio desde Render Dashboard -> New -> Blueprint, apuntando a
+# este repositorio. Render crea la base PostgreSQL y conecta las variables.
+services:
+  - type: web
+    name: web2-tp3
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: web2-tp3-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: web2-tp3-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: web2-tp3-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: web2-tp3-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: web2-tp3-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRATION_MS
+        value: "86400000"
+
+databases:
+  - name: web2-tp3-db
+    plan: free
+    databaseName: demo
+    user: demo

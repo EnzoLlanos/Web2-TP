@@ -1,20 +1,22 @@
 package com.example.demo.model;
 
 /**
- * Dominio propio: una lista organiza favoritos (p. ej. "Regalos").
- * Solo id + nombre; no navega la colección de favoritos.
+ * Dominio propio: una lista organiza favoritos (p. ej. "Regalos") y
+ * pertenece a un usuario (referenciado por id, sin navegar objetos completos).
  */
 public class Lista {
 
     private Long id;
     private String nombre;
+    private Long usuarioId;
 
     public Lista() {
     }
 
-    public Lista(Long id, String nombre) {
+    public Lista(Long id, String nombre, Long usuarioId) {
         this.id = id;
         this.nombre = nombre;
+        this.usuarioId = usuarioId;
     }
 
     public Long getId() {
@@ -31,5 +33,13 @@ public class Lista {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public Long getUsuarioId() {
+        return usuarioId;
+    }
+
+    public void setUsuarioId(Long usuarioId) {
+        this.usuarioId = usuarioId;
     }
 }
