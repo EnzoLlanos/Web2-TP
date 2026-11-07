@@ -43,12 +43,12 @@ GRANT ALL PRIVILEGES ON DATABASE demo TO demo;
 
 | Variable | Default local | Para qué |
 |---|---|---|
-| `DB_URL` | `jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}` | URL JDBC completa (tiene prioridad) |
 | `DB_HOST` | `localhost` | Host de PostgreSQL (Render lo provee) |
 | `DB_PORT` | `5432` | Puerto de PostgreSQL |
 | `DB_NAME` | `demo` | Nombre de la base |
 | `DB_USER` | `demo` | Usuario de la base |
 | `DB_PASSWORD` | `demo` | Clave de la base |
+| `DB_JDBC_URL` | *(vacío → se arma con `DB_HOST/PORT/NAME`)* | Override opcional: URL **JDBC** completa (no usar `postgres://`) |
 | `JWT_SECRET` | secreto de desarrollo (32+ bytes) | Firma HS256 de los JWT |
 | `JWT_EXPIRATION_MS` | `86400000` | Vigencia del token (24 h) |
 | `PORT` | `8080` | Puerto HTTP (Render lo inyecta) |

@@ -1,5 +1,6 @@
 package com.example.demo.exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.validation.FieldError;
@@ -46,6 +47,22 @@ public class GlobalExceptionHandler {
         return problema;
     }
 
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ProblemDetail handleIntegridad(DataIntegrityViolationException ex) {
+        // Respaldo por si una violación de unicidad (p. ej. email) escapa del service.
+        String causa = ex.getMostSpecificCause() != null ? ex.getMostSpecificCause().getMessage() : "";
+        if (causa != null && causa.toLowerCase().contains("email")) {
+            ProblemDetail problema = ProblemDetail.forStatusAndDetail(
+                    HttpStatus.CONFLICT, "Ya existe un usuario con ese email");
+            problema.setTitle("El email ya está registrado");
+            return problema;
+        }
+        ProblemDetail problema = ProblemDetail.forStatusAndDetail(
+                HttpStatus.CONFLICT, "La operación viola una restricción de datos");
+        problema.setTitle("Conflicto de integridad");
+        return problema;
+    }
+
     @ExceptionHandler(ListaConFavoritosException.class)
     public ProblemDetail handleListaConFavoritos(ListaConFavoritosException ex) {
         ProblemDetail problema = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
@@ -75,8 +92,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleGenerico(Exception ex) {
+        String detalle = ex.getClass().getSimpleName();
+        if (ex.getMessage() != null && !ex.getMessage().isBlank()) {
+            detalle += ": " + ex.getMessage();
+        }
         ProblemDetail problema = ProblemDetail.forStatusAndDetail(
-                HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error inesperado");
+                HttpStatus.INTERNAL_SERVER_ERROR, detalle);
         problema.setTitle("Error interno");
         return problema;
     }

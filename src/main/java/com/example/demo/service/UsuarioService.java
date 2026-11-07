@@ -13,6 +13,7 @@ import com.example.demo.security.JwtService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Locale;
 
@@ -36,6 +37,7 @@ public class UsuarioService {
         this.jwtService = jwtService;
     }
 
+    @Transactional
     public UsuarioResponseDTO registrar(RegistroRequestDTO dto) {
         String email = normalizar(dto.email());
         if (usuarios.existsByEmail(email)) {
@@ -57,6 +59,7 @@ public class UsuarioService {
         }
     }
 
+    @Transactional(readOnly = true)
     public AuthResponseDTO login(LoginRequestDTO dto) {
         String email = normalizar(dto.email());
         Usuario usuario = usuarios.findByEmail(email)
